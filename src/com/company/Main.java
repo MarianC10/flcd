@@ -1,22 +1,47 @@
 package com.company;
 
-import data.SymbolTable;
+import com.company.parser.LexicalScanner;
+import com.company.parser.TokensBuilder;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
-
     public static void main(String[] args) {
-        SymbolTable symbolTable = new SymbolTable();
+        try {
+            var tokensBuilder = new TokensBuilder("data/input/tokens.in");
+            tokensBuilder.buildTokens();
+            var lexicalScanner = new LexicalScanner(tokensBuilder);
+            var data = lexicalScanner.analyze("data/input/p1.txt");
+            if (data.getLexicalErrors().size() == 0) {
+                String result = "No lexical errors!";
+                String symbolTableString = data.getSymbolTable().toString();
+                String pifString = data.getProgramInternalForm().toString();
+                System.out.println(result);
+                System.out.println(symbolTableString);
+                System.out.println(pifString);
 
-        symbolTable.add("key1", 2);
-        symbolTable.add("key2", 5);
+                BufferedWriter symTableWriter = new BufferedWriter(new FileWriter("data/output/symbol_table.out"));
+                BufferedWriter pifWriter = new BufferedWriter(new FileWriter("data/output/pif.out"));
+                BufferedWriter resultWriter = new BufferedWriter(new FileWriter("data/output/result.out"));
+                symTableWriter.write(symbolTableString);
+                pifWriter.write(pifString);
+                resultWriter.write(result);
 
-        for (int i = 0; i < 16; ++i) {
-            symbolTable.add(String.valueOf(i), i);
+                symTableWriter.close();
+                pifWriter.close();
+                resultWriter.close();
+            }
+            else {
+                data.getLexicalErrors().forEach(System.out::println);
+                BufferedWriter resultWriter = new BufferedWriter(new FileWriter("data/output/result.out", true));
+                for (var err : data.getLexicalErrors())
+                    resultWriter.append(err).append(String.valueOf('\n'));
+            }
         }
-
-        symbolTable.add("key1", 3);
-
-        assert symbolTable.get("key1") == 3;
-        assert symbolTable.get("key2") == 5;
+        catch (IOException exc) {
+            exc.printStackTrace();
+        }
     }
 }
