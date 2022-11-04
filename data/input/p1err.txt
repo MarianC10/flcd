@@ -1,0 +1,15 @@
+var n, 1d, prime : integer;
+read n;
+
+prime = 1;
+
+if n < 2 ||| n > 2 && n % 2 == 0 then
+    prime = 0;
+else
+    d=3;
+    while d # d <= n do
+        if n % d == 0 then
+            prime = 0;
+        d = d + 2;
+
+write prime;

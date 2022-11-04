@@ -1,0 +1,19 @@
+var n, s, i: integer;
+var a : array[100] of integer;
+
+read n;
+i = 0;
+while i < n do
+    begin
+        read a[i];
+        i = i + 1;
+    end
+
+i = 0;
+while i < n do
+    begin
+        s = s + a[i];
+        i = i + 1;
+    end
+
+write s;

@@ -13,7 +13,7 @@ public class Main {
             var tokensBuilder = new TokensBuilder("data/input/tokens.in");
             tokensBuilder.buildTokens();
             var lexicalScanner = new LexicalScanner(tokensBuilder);
-            var data = lexicalScanner.analyze("data/input/p1.txt");
+            var data = lexicalScanner.analyze("data/input/p1err.txt");
             if (data.getLexicalErrors().size() == 0) {
                 String result = "No lexical errors!";
                 String symbolTableString = data.getSymbolTable().toString();

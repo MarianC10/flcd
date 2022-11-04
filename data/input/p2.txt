@@ -1,0 +1,11 @@
+var a, b, temp : integer;
+
+read a;
+read b;
+
+while b <> 0 do
+    temp = b;
+    b = a % b;
+    a = temp;
+
+write a;

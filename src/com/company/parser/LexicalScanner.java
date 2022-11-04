@@ -82,7 +82,7 @@ public class LexicalScanner {
             programInternalForm.add(new PifPair(operator));
         }
         else {
-            lexicalErrors.add("Lexical error at line " + line + ": invalid operator (" + operator + ")!");
+            lexicalErrors.add("Lexical error at line " + line + ": invalid token " + operator + "!");
         }
     }
 
@@ -123,7 +123,7 @@ public class LexicalScanner {
                 programInternalForm.add(new PifPair("id", position));
             }
             else {
-                lexicalErrors.add("Lexical error at line " + line + ": invalid token (" + token + ")!");
+                lexicalErrors.add("Lexical error at line " + line + ": invalid token " + token + "!");
             }
         }
     }
