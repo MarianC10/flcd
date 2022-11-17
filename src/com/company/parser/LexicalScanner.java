@@ -1,15 +1,14 @@
 package com.company.parser;
 
 import com.company.common.AnalyzerData;
-import com.company.common.PifPair;
+import com.company.common.PIFPair;
+import com.company.data.FiniteAutomaton;
 import com.company.data.ProgramInternalForm;
 import com.company.data.SymbolTable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LexicalScanner {
     private final TokensBuilder tokensBuilder;
@@ -27,6 +26,12 @@ public class LexicalScanner {
         var symbolTable = new SymbolTable();
         var programInternalForm = new ProgramInternalForm();
         var lexicalErrors = new ArrayList<String>();
+        String integerConstantAutomatonFileName = "data/input/integer_constant.csv";
+        var isIntegerConstantAutomaton =
+                FiniteAutomaton.provideFiniteAutomaton(integerConstantAutomatonFileName);
+        String identifierAutomatonFileName = "data/input/identifier.csv";
+        var isIdentifierAutomaton =
+                FiniteAutomaton.provideFiniteAutomaton(identifierAutomatonFileName);
 
         FileInputStream fis = new FileInputStream(programFilePath);
         Scanner sc = new Scanner(fis);
@@ -51,10 +56,12 @@ public class LexicalScanner {
                     processOperator(token, operators, programInternalForm, lexicalErrors, line);
 
                     if (nextToken != null)
-                        processNonOperator(nextToken, keywords, symbolTable, programInternalForm, lexicalErrors, line);
+                        processNonOperator(nextToken, keywords, symbolTable, programInternalForm, lexicalErrors, line,
+                                isIntegerConstantAutomaton, isIdentifierAutomaton);
                 }
                 else {
-                    processNonOperator(token.toString(), keywords, symbolTable, programInternalForm, lexicalErrors, line);
+                    processNonOperator(token.toString(), keywords, symbolTable, programInternalForm, lexicalErrors,
+                            line, isIntegerConstantAutomaton, isIdentifierAutomaton);
                 }
             }
 
@@ -79,7 +86,7 @@ public class LexicalScanner {
                                 int line) {
         var operator = operatorBuilder.toString();
         if (operators.contains(operator)) {
-            programInternalForm.add(new PifPair(operator));
+            programInternalForm.add(new PIFPair(operator));
         }
         else {
             lexicalErrors.add("Lexical error at line " + line + ": invalid token " + operator + "!");
@@ -91,18 +98,20 @@ public class LexicalScanner {
                                     SymbolTable symbolTable,
                                     ProgramInternalForm programInternalForm,
                                     ArrayList<String> lexicalErrors,
-                                    int line) {
-        Matcher isNumberConstant = Pattern.compile("(([+\\-])?[1-9][0-9]*)|0").matcher("");
-        Matcher isVariable = Pattern.compile("_?[a-zA-Z][a-zA-Z0-9]*").matcher("");
+                                    int line,
+                                    FiniteAutomaton isIntegerConstant,
+                                    FiniteAutomaton isIdentifier) {
+//        Matcher isIntegerConstant = Pattern.compile("(([+\\-])?[1-9][0-9]*)|0").matcher("");
+//        Matcher isIdentifier = Pattern.compile("_?[a-zA-Z][a-zA-Z0-9]*").matcher("");
 
         if (keywords.contains(token)) {
-            programInternalForm.add(new PifPair(token));
+            programInternalForm.add(new PIFPair(token));
         }
         else if (!token.equals(" ") && !token.equals("\t")) {
-            isNumberConstant.reset(token);
-            isVariable.reset(token);
+//            isIntegerConstant.reset(token);
+//            isIdentifier.reset(token);
 
-            if (isNumberConstant.matches() || isStringConstant(token) || isCharConstant(token)) {
+            if (isIntegerConstant.matches(token) || isStringConstant(token) || isCharConstant(token)) {
                 int position;
                 if (symbolTable.contains(token)) {
                     position = symbolTable.get(token);
@@ -110,9 +119,9 @@ public class LexicalScanner {
                 else {
                     position = symbolTable.add(token);
                 }
-                programInternalForm.add(new PifPair("const", position));
+                programInternalForm.add(new PIFPair("const", position));
             }
-            else if (isVariable.matches()) {
+            else if (isIdentifier.matches(token)) {
                 int position;
                 if (symbolTable.contains(token)) {
                     position = symbolTable.get(token);
@@ -120,7 +129,7 @@ public class LexicalScanner {
                 else {
                     position = symbolTable.add(token);
                 }
-                programInternalForm.add(new PifPair("id", position));
+                programInternalForm.add(new PIFPair("id", position));
             }
             else {
                 lexicalErrors.add("Lexical error at line " + line + ": invalid token " + token + "!");

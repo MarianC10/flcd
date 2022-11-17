@@ -1,17 +1,17 @@
 package com.company.data;
 
-import com.company.common.PifPair;
+import com.company.common.PIFPair;
 
 import java.util.ArrayList;
 
 public class ProgramInternalForm {
-    public ArrayList<PifPair> data;
+    public ArrayList<PIFPair> data;
 
     public ProgramInternalForm() {
         this.data = new ArrayList<>();
     }
 
-    public boolean add(PifPair pifPair) {
+    public boolean add(PIFPair pifPair) {
         return this.data.add(pifPair);
     }
 
