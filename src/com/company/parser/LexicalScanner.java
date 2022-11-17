@@ -101,16 +101,10 @@ public class LexicalScanner {
                                     int line,
                                     FiniteAutomaton isIntegerConstant,
                                     FiniteAutomaton isIdentifier) {
-//        Matcher isIntegerConstant = Pattern.compile("(([+\\-])?[1-9][0-9]*)|0").matcher("");
-//        Matcher isIdentifier = Pattern.compile("_?[a-zA-Z][a-zA-Z0-9]*").matcher("");
-
         if (keywords.contains(token)) {
             programInternalForm.add(new PIFPair(token));
         }
         else if (!token.equals(" ") && !token.equals("\t")) {
-//            isIntegerConstant.reset(token);
-//            isIdentifier.reset(token);
-
             if (isIntegerConstant.matches(token) || isStringConstant(token) || isCharConstant(token)) {
                 int position;
                 if (symbolTable.contains(token)) {

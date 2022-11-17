@@ -80,7 +80,7 @@ public class FiniteAutomaton {
         return finalStates.contains(currentState);
     }
 
-    public FiniteAutomaton(HashSet<String> states,
+    private FiniteAutomaton(HashSet<String> states,
                            String initialState,
                            HashSet<String> finalStates,
                            HashSet<Character> alphabet,
@@ -90,5 +90,16 @@ public class FiniteAutomaton {
         this.finalStates = finalStates;
         this.alphabet = alphabet;
         this.transitions = transitions;
+    }
+
+    @Override
+    public String toString() {
+        return "FiniteAutomaton{" +
+                "states=" + states +
+                ", initialState='" + initialState + '\'' +
+                ", finalStates=" + finalStates +
+                ", alphabet=" + alphabet +
+                ", transitions=" + transitions +
+                '}';
     }
 }

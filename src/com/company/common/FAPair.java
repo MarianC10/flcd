@@ -34,4 +34,12 @@ public class FAPair {
         result = 31 * result + letter.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "FAPair{" +
+                "state='" + state + '\'' +
+                ", letter=" + letter +
+                '}';
+    }
 }
