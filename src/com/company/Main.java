@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.data.FiniteAutomaton;
+import com.company.data.Grammar;
 import com.company.parser.LexicalScanner;
 import com.company.parser.TokensBuilder;
 
@@ -15,18 +16,22 @@ public class Main {
             System.out.println("Enter the run mode.");
             System.out.println("1. Analyze a program");
             System.out.println("2. Upload a finite automaton");
+            System.out.println("3. Upload a grammar");
             var scanner = new Scanner(System.in);
 
             String runMode = scanner.nextLine().trim();
-            while (!runMode.equals("1") && !runMode.equals("2")) {
+            while (!runMode.equals("1") && !runMode.equals("2") && !runMode.equals("3")) {
                 runMode = scanner.nextLine().trim();
             }
 
             if (runMode.equals("1")) {
                 analyzeProgram();
             }
-            else {
+            else if (runMode.equals("2")) {
                 uploadAutomaton();
+            }
+            else {
+                uploadGrammar();
             }
         }
         catch (IOException exc) {
@@ -34,11 +39,11 @@ public class Main {
         }
     }
 
-    public static void analyzeProgram() throws IOException {
+    private static void analyzeProgram() throws IOException {
         var tokensBuilder = new TokensBuilder("data/input/tokens.in");
         tokensBuilder.buildTokens();
         var lexicalScanner = new LexicalScanner(tokensBuilder);
-        var data = lexicalScanner.analyze("data/input/p1err.txt");
+        var data = lexicalScanner.analyze("data/input/p1.txt");
         if (data.getLexicalErrors().size() == 0) {
             String result = "No lexical errors!";
             String symbolTableString = data.getSymbolTable().toString();
@@ -66,7 +71,7 @@ public class Main {
         }
     }
 
-    public static void uploadAutomaton() throws IOException {
+    private static void uploadAutomaton() throws IOException {
         System.out.println("Enter the automaton to be uploaded.");
         System.out.println("1. Identifier finite automaton");
         System.out.println("2. Integer constant finite automaton");
@@ -104,5 +109,52 @@ public class Main {
                 done = true;
             }
         }
+    }
+
+    private static void uploadGrammar() throws IOException {
+        Grammar grammar = Grammar.provideGrammar("data/input/sample-bnf-syntax.in");
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            showGrammarMenu();
+            int command = Integer.parseInt(scanner.nextLine());
+
+            if (command == 0) break;
+
+            switch (command) {
+                case 1:
+                    System.out.println("The set of terminals is:\n" + grammar.getTerminals());
+                    break;
+                case 2:
+                    System.out.println("The set of nonterminals is:\n" + grammar.getNonTerminals());
+                    break;
+                case 3:
+                    System.out.println("The set of productions is:\n" + grammar.getProductions());
+                    break;
+                case 4:
+                    System.out.println("Insert a nonterminal");
+                    String nonTerminal = scanner.nextLine();
+                    System.out.println("The set of production for " + nonTerminal + " is: " +
+                            grammar.getProductions(nonTerminal));
+                    break;
+                case 5:
+                    System.out.println("Is this grammar a CFG? " + grammar.isContextFree() +
+                            "\n");
+                    break;
+
+
+            }
+        }
+
+    }
+
+    private static void showGrammarMenu() {
+        System.out.println("Menu: ");
+        System.out.println("1. Print the set of terminals.");
+        System.out.println("2. Print the set of nonterminals.");
+        System.out.println("3. Print the set of productions.");
+        System.out.println("4. Print the productions for a given nonterminal.");
+        System.out.println("5. CFG Check");
+        System.out.println("0. Exit");
     }
 }
