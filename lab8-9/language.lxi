@@ -1,0 +1,69 @@
+%{
+#include "language.tab.h"
+%}
+
+%option noyywrap
+
+LETTER		    [A-Za-z]
+DIGIT		    [0-9]
+NON_ZERO_DIGIT	[1-9]
+IDENTIFIER	    [_]*{LETTER}({LETTER}|{DIGIT})*
+UNSIGN_NR {NON_ZERO_DIGIT}({DIGIT})*
+NR_CONST ([+"-"]{UNSIGN_NR})|[0]
+CHAR_CONST "'"[^\n]*"'"
+STR_CONST ["][^\n]*["]
+DELIMIT_1	[;.:,]
+OPERATOR_1	[+*/()[]!]|"<"|">"|"="|"%"|"-"
+
+%%
+
+[ \t\n]
+
+program		{return PROGRAM;}
+begin		{return BEGINN;}
+end		{return END;}
+const		{return CONST;}
+do		{return DO;}
+if		{return IF;}
+then		{return THEN;}
+else		{return ELSE;}
+read		{return READ;}
+write       {return WRITE;}
+var		{return VAR;}
+while		{return WHILE;}
+struct {return STRUCT;}
+of {return OF;}
+type {return TYPE_1;}
+true {return TRUE;}
+false {return FALSE;}
+
+char		{return CHAR;}
+integer		{return INTEGER;}
+boolean {return BOOLEAN;}
+array       {return ARRAY;}
+
+"=="		{return EQ;}
+"!="		{return NE;}
+"<="		{return LE;}
+">="		{return GE;}
+"||"		{return OR;}
+"&&"		{return AND;}
+
+{IDENTIFIER}	{return ID;}
+{NR_CONST}	{
+	return CONST_INT;
+		}
+{UNSIGN_NR} {
+	return UNSIGN_NR;
+}
+{CHAR_CONST}	{
+	return CONST_CHAR;
+		}
+{STR_CONST}	{return CONST_STR;}
+
+{DELIMIT_1}	{
+    return yytext[0];}
+{OPERATOR_1}	{
+    return yytext[0];}
+%%
+

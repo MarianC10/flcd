@@ -1,0 +1,140 @@
+
+%token PROGRAM
+%token BEGINN
+%token END
+%token CONST
+%token DO
+%token IF
+%token ELSE
+%token THEN
+%token READ
+%token WRITE
+%token VAR
+%token WHILE
+%token STRUCT
+%token OF
+%token TYPE_1
+%token TRUE
+%token FALSE
+%token UNSIGN_NR
+
+%token ID
+%token CONST_INT
+%token CONST_REAL
+%token CONST_CHAR
+%token CONST_STR
+
+%token CHAR
+%token INTEGER
+%token BOOLEAN
+%token ARRAY
+
+%token EQ
+%token NE
+%token LE
+%token GE
+
+%left '+' '-'
+%left '%' '*' '/'
+%left OR
+%left AND
+
+src_program: PROGRAM ID ";" stmt_list ";"
+        | PROGRAM ID ';' VAR decl_list ";" stmt_list ";"
+        ;
+
+decl_list: declaration 
+        | declaration decl_list
+        ;
+
+declaration: ID ":" all_type
+        | ID id_list ":" all_type
+        ;
+
+id_list: "," ID 
+        | "," id_list
+        ;
+
+simple_type: CHAR
+        | INTEGER
+        | BOOLEAN
+        ;
+
+array_type: ARRAY "[" CONST_INT "]" OF simple_type
+        ;
+
+all_type: simple_type
+        | array_type
+        ;
+
+cmpd_stmt: BEGINN stmt_list ";" END
+        ;
+
+stmt_list: stmt 
+        | stmt ";" stmt_list
+        ;
+
+stmt: simple_stmt
+        | struct_stmt
+        ;
+
+simple_stmt: assign_stmt
+        | io_stmt
+        ;
+
+assign_stmt: ID "=" expression
+        ;
+
+constant:	CONST_INT
+		| TRUE
+		| FALSE	
+		| CONST_CHAR
+		;
+expression:	factor
+		| expression '+' expression
+		| expression '-' expression
+		| expression '*' expression
+		| expression '/' expression
+		;
+factor:		ID
+		| constant
+		| '(' expression ')'
+		;
+
+io_stmt: read_stmt
+        | write_stmt
+        ;
+
+read_stmt: READ ID
+        ;
+
+write_stmt: WRITE expression
+        ;
+
+struct_stmt: cmpd_stmt
+        | if_else_stmt
+        | while_stmt
+        ;
+
+if_else_stmt: if_stmt
+        | if_stmt else_stmt
+        ;
+
+if_stmt: IF condition THEN stmt
+        ;
+
+else_stmt: ELSE stmt
+        ;
+
+while_stmt: WHILE condition DO stmt
+        ;
+
+condition: expression relation expression
+        ;
+
+relation: EQ
+		| '<'
+		| '>'
+		| LE
+		| GE
+		;

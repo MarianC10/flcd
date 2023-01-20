@@ -1,0 +1,10 @@
+program test;
+
+var a, b, c, min : integer;
+
+begin 
+    min = a;
+
+    min = b;
+    write min;
+end
